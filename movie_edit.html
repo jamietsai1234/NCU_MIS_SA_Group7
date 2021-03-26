@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--提供網頁內容的資訊給瀏覽器或是搜尋引擎-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+
+  <title>編輯電影 ｜ 美美影城 </title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- 控制網頁與外部資源的關係，最常見應用就是導入css 檔案 -->
+  <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="shortcut icon">
+  
+  <!-- Custom styles for this template -->
+  	<link href="statics/css/product.css" rel="stylesheet">
+	<link href="statics/css/welcome.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="statics/css/cake.generic.css">
+  	<script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+</head>
+<style>
+    .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+  .a{
+     z-index:55
+  }
+  
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+<body style="background:black;">
+  <div class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-black border-bottom shadow-sm"style="background-color:rgba(48,48,48,0.8)" >
+  <img  src="statics/icon/pig.ico"  width="5% hight=5">
+    <h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+
+  </div>
+  </body>
+
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+	.bg-pink {
+ 		background-color:#fff5e3;
+     }
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 5.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+<!--   <link href="statics/css/product.css" rel="stylesheet"> -->
+
+  <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    
+        <div id="content"><br><br><br><br><br>
+        	
+            <h2><strong>更新電影資料</strong></h2>
+            <a href="movie_index.html">電影清單</a>
+            <a href="movie_show_manager.html">電影列表</a>
+
+            <div id="flashMessage" class="message" style="display: none;"></div>
+
+            <form id="form" accept-charset="utf-8">
+                <div style="display:none;"><input type="hidden" name="_method" value="POST"></div>
+                <div class="input movie_name required">
+                    <label for="movie_name">電影名稱</label>
+                    <input name="name" maxlength="30" type="text" id="movie_name" required="required">
+                </div>
+                <div class="input intro required">
+                    <label for="movie_intro">電影簡介</label>
+                    <input name="intro" maxlength="1000" type="text" id="movie_intro" required="required">
+                </div>
+                <div class="input length required">
+                    <label for="movie_length">電影長度</label>
+                    <input name="length" type="text" id="movie_length" required="required">
+                </div>
+                <div class="input text">
+                    <label for="movie_image">電影圖片</label>
+                    <input name="image" type="file" id="movie_image" required="required">
+                </div>
+                
+                <div class="submit"><input type="button" value="更新" id="submit"></div>
+            </form>
+
+            <script type="text/javascript">
+                // 取得網址參數
+                var url_string = window.location.href;
+                var url = new URL(url_string);
+                var id = url.searchParams.get("id");
+                var sql_num = 0;
+
+                function updateMovie(id) {
+                    var name = $('#movie_name').val();
+                    var intro = $('#movie_intro').val();
+                    var length = $('#movie_length').val();
+                    var image = $('#movie_image').val().split("\\")[2];
+
+                    //var password_rule = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+                    //if(!password_rule.test(password)) {
+                      //  alert("密碼格式不符，長度至少8，且至少包含一個數字和英文字母！");
+                    //}
+                   // else {
+                        // 將資料組成JSON格式
+                        var data_object = {
+                            "id": id,
+                            "name": name,
+                            "intro": intro,
+                            "length": length,
+                            "image": image
+                        };
+
+                        // 將JSON格式轉換成字串
+                        var data_string = JSON.stringify(data_object);
+
+                        // 發出POST的PUT請求
+                        $.ajax({
+                                type: "PUT",
+                                url: "api/movie.do",
+                                data: data_string,
+                                crossDomain: true,
+                                cache: false,
+                                dataType: 'json',
+                                timeout: 5000,
+                                success: function (response) {
+                                    if(response.status == 200){
+                                        updateSQLTable(response.response);
+                                        getMovie();
+                                        alert("成功更新電影資料!");
+                                        parent.document.location.href = "movie_index.html";
+                                    }
+                                },
+                                error: function () {
+                                    alert("無法連線到伺服器！");
+                                }
+                        });
+                    }
+              
+
+                // 更新SQL指令歷史表格
+                function updateSQLTable(data) {
+                    var time = (data.time / 1000000).toFixed(2);
+                    var table_html = "";
+                    
+                    sql_num += 1
+
+                    table_html += '<tr>';
+                    table_html += '<td>' + sql_num + '</td>';
+                    table_html += '<td>' + data.sql + '</td>';
+                    table_html += '<td style="text-align: right">' + '0' + '</td>';
+                    table_html += '<td style="text-align: right">' + data.row + '</td>';
+                    table_html += '<td style="text-align: right">' + data.row + '</td>';
+                    table_html += '<td style="text-align: right">' + time + '</td>';
+                    table_html += '</tr>';
+                    $("#sql_log > tbody").append(table_html);
+                    $("#sql_summary").html("(default) " + data.row + " queries took " + time + " ms");
+                }
+
+                function getMovie() {
+                    $.ajax({
+                        type: "GET",
+                        url: "api/movie.do",
+                        crossDomain: true,
+                        data: "id=" + id,
+                        cache: false,
+                        dataType: 'json',
+                        timeout: 5000,
+                        success: function (response) {
+                            if(response.status == 200){
+                            	updateSQLTable(response.response);
+                            	document.getElementById('movie_name').value = response['response']['data'][0]['name'];
+                            	document.getElementById('movie_intro').value = response['response']['data'][0]['intro'];
+                            	document.getElementById('movie_length').value = response['response']['data'][0]['length'];
+                            	document.getElementById('movie_image').value = response['response']['data'][0]['image'];
+                            }
+                            console.log(response);
+                        },
+                        error: function () {
+                            alert("無法連線到伺服器！");
+                        }
+                    });
+                }
+
+                $('#submit').click(function() {
+                    updateMovie(id)
+                });
+                
+                $(document).ready(function() {
+                	// 發出GET的AJAX請求取得原本該會員的資料
+                 	$("#sql_log > tbody").empty();
+                    getMovie();
+                });
+            </script>
+        </div>
+        <footer class="text-muted">
+    <div class="container">
+      
+      <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+      <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a
+          href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+    </div>
+  </footer>   
+</body>
+
+</html>

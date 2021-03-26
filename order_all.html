@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+
+  <title>訂單列表 ｜ 美美影城</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+  <link href="statics/css/font-awesome.min.css" rel="stylesheet">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="shortcut icon">
+
+  <style>
+      .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+  .a{
+     z-index:55
+  }
+  
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <link href="statics/css/product.css" rel="stylesheet">
+  <link href="statics/css/jquery-confirm.css" rel="stylesheet">
+
+  <script src="statics/js/jquery-3.4.1.min.js"></script>
+  <script src="statics/js/jquery-confirm.js"></script>
+  <script src="statics/js/big.min.js"></script>
+</head>
+
+<body style="background-color:#000000">
+  <div class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color:rgba(48,48,48,0.8)">
+    <img  src="statics/icon/pig.ico"  width="5% hight=5">
+    <h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+      <a class="p-2 text-light" href="movie_show_manager.html">電影列表</a>
+      <a class="p-2 text-light" href="movie_index.html">電影管理模組</a>
+      <a class="p-2 text-light" href="index.html">會員管理模組</a>
+      <a class="p-2 text-light" href="session_index.html">場次管理模組</a>
+      <a class="p-2 text-light" href="order_all.html">訂單管理模組</a>  
+      <a class="btn" style="border-color:#ffc6ba;color:#ffc6ba" href="welcome.html">登出</a>
+    </nav>
+  </div>
+
+  <div class="a pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center" style="background-color:#000000">
+    <h1 class="d" style="color:#000000">所有訂單列表</h1>
+    <h1 class="text-light">所有訂單列表</h1>
+    <p class="lead text-light">以下是目前所存在之所有訂單</p>
+  </div>
+
+  <div class="container text-light">
+	  <div class="py-5">
+	  	<div class='row'>
+		  	<div id='order_panel' class="row mb-2">
+        </div>
+      </div>
+	  </div>
+  </div>
+
+  <script type="text/javascript">
+  var sql_num = 0;
+  function deleteOrder(id) {
+      var check = window.confirm("確認刪除訂單？");
+      if (check == true) {
+          console.log("You pressed OK!");
+          var request = {'id': id};
+          var data_string = JSON.stringify(request);
+          $.ajax({
+              type: "DELETE",
+              url: "api/order.do",
+              crossDomain: true,
+              data: data_string,
+              cache: false,
+              dataType: 'json',
+              timeout: 5000,
+              success: function (response) {
+                  if(response.status == 200){
+                      $("#flashMessage").html("成功! 已經成功刪除訂單...");
+                      $("#flashMessage").show();
+                      getAllOrderData();
+                  }
+                  console.log(response);
+              },
+              error: function () {
+                  alert("無法連線到伺服器！");
+              }
+          });
+      }
+      else {
+          console.log("You pressed Cancel!");
+      }
+  }
+  function getAllOrderData() {
+	  $.ajax({
+          type: "GET",
+          url: "api/order.do",
+          crossDomain: true,
+          cache: false,
+          dataType: 'json',
+          timeout: 5000,
+          success: function (response) {
+              if(response.status == 200){
+            	  updateHTML(response.response.data);
+            	  updateSQLHTML(response.response);
+              }
+              console.log(response);
+          },
+          error: function () {
+              alert("無法連線到伺服器！");
+          }
+    });
+  }
+  
+  function updateHTML(data) {
+	  $('#order_panel').empty();
+	  var inner_html = '';
+	  var temp = '';
+	  
+	  $.each(data, function (key, value) {
+		  var amount = Big(0.0);
+		  $.each(value['ticket_info'], function (k, v) {
+			 amount = amount.plus(v['ticket_price'])
+		  });
+		  temp = '<div class="col-md-6">';
+		  temp += '<div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">';
+		  temp += '<div class="col p-4 d-flex flex-column position-static">';
+		  temp += '<strong class="d-inline-block mb-2 text-primary">訂單編號：#' + value['order_info']['order_id'] + '</strong>';
+		  temp += '<h3 class="mb-0"><span class="p-2">' + value['order_info']['member_name'] + '</span></h3>';
+		  temp += '<hr/>';
+		  temp += '<div class="mb-1 text-light">建立時間：' + value['order_info']['order_create'] + '</div>';
+		  temp += '<div class="mb-1 text-light">修改時間：' + value['order_info']['order_modify'] + '</div>';
+		  temp += '<p class="card-text mb-auto">總金額：$ ' + amount + '</p>';
+		  temp += '<a class="p-2" style="color:#7faaf0" href="order_detail_manager.html?id='+ value['order_info']['order_id'] + '" class="stretched-link">詳細資料</a>';
+		  temp += '<a class="p-2" style="color:#7faaf0" href="javascript: deleteOrder(' + value['order_info']['order_id'] + ');">刪除訂單</a>';
+		  temp += '</div></div></div>';
+		  inner_html = temp + inner_html;
+	  });
+	  $('#order_panel').append(inner_html);
+  }
+  function updateSQLHTML(data) {
+      $("#sql_log > tbody").empty();
+      var time = (data.time / 1000000).toFixed(2);
+      var inner_html = "";
+      sql_num = 0;
+      sql_num += 1
+
+      inner_html += '<tr>';
+      inner_html += '<td>' + sql_num + '</td>';
+      inner_html += '<td>' + data.sql + '</td>';
+      inner_html += '<td style="text-align: right">' + '0' + '</td>';
+      inner_html += '<td style="text-align: right">' + data.row + '</td>';
+      inner_html += '<td style="text-align: right">' + data.row + '</td>';
+      inner_html += '<td style="text-align: right">' + time + '</td>';
+      inner_html += '</tr>';
+      $("#sql_log > tbody").append(inner_html);
+      $("#sql_summary").html("(default) " + data.row + " queries took " + time + " ms");
+  }
+  $(document).ready(function() {
+	  getAllOrderData();
+  });
+  </script>
+
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-right">
+        <a href="#">Back to top</a>
+      </p>
+      <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+      <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a
+          href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+
+  <title>票夾 ｜ 美美影城 </title>
+
+  <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+  <link href="statics/css/font-awesome.min.css" rel="stylesheet">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="shortcut icon">
+
+
+  <style>
+  .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+  .a{
+     z-index:55
+  }
+  
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <link href="statics/css/product.css" rel="stylesheet">
+  <link href="statics/css/jquery-confirm.css" rel="stylesheet">
+
+  <script src="statics/js/jquery-3.4.1.min.js"></script>
+  <script src="statics/js/jquery-confirm.js"></script>
+</head>
+
+<body style="background-color:#000000">
+  <div class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color:rgba(48,48,48,0.8)">
+    <img  src="statics/icon/pig.ico"  width="5% hight=5">
+    <h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+      
+      <a class="p-2 text-light" id=movieshow href="movie_show.html">電影列表</a>
+      <a class="p-2 text-light" id=ordermember href="ordermember.html">訂單列表</a>
+    
+    <a class="p-2 text-light" id=cart type= disabled>票夾</a>
+    <a class="btn" style="border-color:#ffc6ba;color:#ffc6ba" href="welcome.html">登出</a>
+    </nav>
+  </div>
+
+  <div class="a pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center" style="background-color:#000000">
+     <h1 class="d" style="color:#000000">票夾</h1>
+    <h1 class="text-light">票夾</h1>
+    <p class="lead text-light">以下是目前存在於票夾之訂單，請輸入訂單相關資訊後即可送出訂單！</p>
+  </div>
+
+  <div class="container">
+	  <div class="py-5">
+	  	<div class='row'>
+		  	<div class="col-md-4 order-md-2 mb-4">
+		      <h4 class="d-flex justify-content-between align-items-center mb-3">
+		        <span class="text-light">總計</span>
+		        <span id="date" class="badge badge-secondary badge-pill"></span>
+		      </h4>
+		      <ul class="list-group mb-3">
+		        <li class="list-group-item d-flex justify-content-between lh-condensed">
+		          <div class="text-success">
+		            <h6 class="my-0">票券總數</h6>
+		            <small>Quantities</small>
+		          </div>
+		          <span id="total_num" class="text-success">0</span>
+		        </li>
+		        <li class="list-group-item d-flex justify-content-between">
+		          <span>Total (NTD)</span>
+		          <strong>$ <span id="amount">0.00</span></strong>
+		        </li>
+		      </ul>
+		      <button id="check" class="btn btn-info btn-lg btn-block" type="button">結帳</button>
+		      <button id="clean" class="btn btn-dark btn-lg btn-block" type="button">清空購物車</button>
+		    </div>
+
+		    <div class="col-md-8 order-md-1">
+		      <h4 class="mb-3 text-light">個人資訊</h4>
+		      <hr class="mb-4">
+	        <div class="row">
+	          <div class="col-md-6 mb-2 text-light">
+	            <label for="name">會員姓名<span class="text-muted"></span></label>
+	            <input type="text" class="form-control" id="name" maxlength="100" value="" required="required" disabled="disabled">
+	          </div>
+	          <div>
+	          <label for="state"></label>
+	            <input type="hidden" class="form-control" id="state" maxlength="100" value="false" required="required" disabled="disabled">
+		    </div>
+		    </div>
+
+	        <div class="mb-3 text-light">
+	          <label for="email">會員Email <span class="text-muted"></span></label><br/>
+	          <input name="member_email" class="form-control" maxlength="1000" type="email"  id="member_email" required="required" disabled="disabled">
+	        </div>
+
+			<div class="mb-3 text-light">
+	          <label for="phonenum">取票人姓名:</label><br/>
+	          <input id="pname" type="text" class="form-control" maxlength="12" required>
+	        </div>
+
+	        <div class="mb-3 text-light">
+	          <label for="phonenum">取票人手機號碼:</label><br/>
+	          <input id="phone" type="tel" class="form-control" maxlength="10" placeholder="09XXXXXXXX" required>
+	        </div>
+
+	        <div class="mb-3 text-light">
+	          <label for="address">付款方式:</label>
+	          <select name="type" id="payment_method">
+	          <option value="ATM" selected >ATM</option>
+	          <option value="信用卡">信用卡</option>
+	          </select>
+	        </div>
+
+	        <h4 class="mb-3 text-light">商品資訊</h4>
+	        <hr class="mb-4">
+	        <div class="row">
+				<div class="table-responsive">
+			    	<table id="cart_table" class="table table-striped table-sm text-light">
+			        	<thead>
+			            	<tr>
+				              	<th class="text-center" style="width: 30%;color:#ffffff">電影名稱</th>
+				             	<th class="text-center" style="width: 28%;color:#ffffff">場次時間</th>
+				           		<th class="text-center" style="width: 9%;color:#ffffff">影廳</th>
+				                <th class="text-center" style="width: 11%;color:#ffffff">座位</th>
+				                <th class="text-center" style="width: 11%;color:#ffffff">票種</th>			              
+				                <th class="text-center" style="width: 11%;color:#ffffff">金額</th>
+			                </tr>
+			          </thead>
+			       <tbody>
+				</tbody>
+			 </table>
+</div></div></div></div></div></div>
+
+  <script>
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var movie_id = url.searchParams.get("movie_id");
+    var session_id = url.searchParams.get("session_id");
+    var seatString = url.searchParams.get("seat_id");
+    var member_email = url.searchParams.get("member_email");
+    document.getElementById('member_email').value=member_email;
+    getName();
+    movieshow();
+    ordermember();
+    getOrderID();
+    var seatArr = new Array();
+    seatArr = seatString.split(',');  
+    var seatlength = seatArr.length;
+    var total_num = seatlength;
+    var typeArray = new Array();
+    var priceArray = new Array();
+    var sessionIDArray = new Array();
+    var seatArray = new Array();    
+          
+    if (seatArr.length == 0) {  	
+    	alert("購物車沒有任何商品！");
+    	setButtonState("check", false);
+    }
+    else{
+    	getSessionData()
+    	$("#total_num").html(seatlength);
+    }       
+    
+    $("#check").click(function () {
+    	var data = {
+    			"member_name": $("#name").val(),
+    			"member_email": $("#member_email").val(),
+    			"picker_name": $("#pname").val(),
+    			"picker_phone": $("#phone").val(),
+    			"payment_method": $("#payment_method").val(),
+    			"state": $("#state").val(),
+    	}
+        function vaildData(data) {
+        	var email_rule = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+        	
+        	if (data["name"] == "" || data['phone'] == "" || data['address'] == "")  alert("必填寫欄位不得有空值！");
+        	else if ( member_email != "" && !email_rule.test(member_email)) alert("Email格式不符！");
+        	else return true;
+
+        	return false;
+        }
+    	// 驗證輸入的資料
+    	pass_vaild = vaildData(data);
+    	if (pass_vaild) {
+    		var data_string = JSON.stringify(data);
+
+    		// 發出POST的AJAX請求
+        $.ajax({
+          type: "POST",
+          url: "api/order.do",
+          data: data_string,
+          crossDomain: true,
+          cache: false,
+          dataType: 'json',
+          timeout: 5000,
+          async: false,
+          success: function (response) {
+              if(response.status == 200){
+              	$.confirm({
+                    theme: 'modern',
+                    icon: 'fa fa-check-circle-o',
+                    type: 'green',
+                    animation: 'scale',
+                    title: '系統提醒',
+                    content: "「購物車結帳成功」，已完成新增訂單！",
+                    buttons: {
+                        確定: {
+                            text: '確定',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                          	  cleanAllData();
+                              document.location.href = "ordermember.html?member_email="+member_email;
+                            }
+                        }
+                    }
+                });
+              }
+          },
+          error: function () {
+              alert("無法連線到伺服器！in orderdo");
+          }
+        });
+    	
+        for(var i = 0; i < seatlength; i++){
+    	var tdata = {
+   		
+    			"ticket_type":typeArray[i],
+    			"ticket_price":priceArray[i],
+    			"quantity":1,
+    			"order_id":getOrderID(),
+    			"seat_id":seatArr[i],
+    			"session_id":sessionIDArray[i],
+    			
+    	}    	
+    	var tdata_string = JSON.stringify(tdata);
+
+		// 發出POST的AJAX請求
+    $.ajax({
+      type: "POST",
+      url: "api/ticket.do",
+      data: tdata_string,
+      crossDomain: true,
+      cache: false,
+      dataType: 'json',
+      timeout: 5000,
+      success: function (response) {
+          if(response.status == 200){
+        	console.log("新增ticket成功!!");
+          }
+      },
+      error: function () {
+          alert("無法連線到伺服器！in ticketdo");
+      }
+    });
+    	}//end ticket for
+      }//if pass valid
+    });//end click
+
+    $("#clean").click(function () {
+    	console.log("[@Action]清空購物車");
+    	cleanAllData();
+    	$("#total_num").html(0);
+    	$("#amount").html(0);
+    });
+
+    function getName() {
+        $.ajax({
+            type: "GET",
+            url: "api/cartmember.do",
+            crossDomain: true,
+            data: "email=" + member_email,
+            cache: false,
+            dataType: 'json',
+            timeout: 5000,
+            success: function (response) {
+                if(response.status == 200){
+                	document.getElementById('name').value = response['response']['data'][0]['member_info']['name'];
+                }
+                console.log(response);
+            },
+            error: function () {
+                alert("無法連線到伺服器！");
+            }
+        });
+    }
+    
+    function updateName(data) {
+  	 var  temp="";
+  	  $.each(data, function (key, value) {
+  		  $.each(value['member_info'], function (k, v) {
+  			 temp= value['member_info']['name'];
+  		  });
+  		document.getElementById('name').value=temp;
+  	  });
+    }
+
+    function movieshow(){	  	
+	  	document.getElementById("movieshow").href="movie_show.html?member_email="+ member_email;
+	}
+    
+    function ordermember(){	  	
+	  	document.getElementById("ordermember").href="ordermember.html?member_email="+ member_email;
+	}
+	
+    function cleanAllData() {
+      $("#cart_table > tbody").empty();
+      $("#total_quantity").html('0');
+      $("#amount").html('0');
+      setButtonState("check", false);
+    }
+
+    function setButtonState(id, action) {
+      if (!action) {
+          $('#' + id).prop('disabled', true);
+          $('#' + id).addClass('disabled');
+          $('#' + id).html('請先新增商品');
+      }
+      else {
+    	  $('#' + id).prop('disabled', false);
+          $('#' + id).removeClass('disabled');
+          $('#' + id).html('結帳');
+      }
+    }
+    
+    function getMovieData() {    	
+    	var movie_name = "";
+  	  $.ajax({
+            type: "GET",
+            url: "api/moviedetail.do",
+            data: "id=" + movie_id,
+            crossDomain: true,
+            cache: false,
+            dataType: 'json',
+            timeout: 5000,
+            async:false,
+            success: function (response) {
+            	movie_name = getMovieName(response.response.data);  
+            },
+            error: function () {
+                alert("無法連線到伺服器！");
+            }
+      });
+  	  	return movie_name;
+    }
+    
+    var movie_name = ""; 
+    function getMovieName(data){   	    	
+    	$.each(data, function (key, value) { 
+    		movie_name = data.movie_info.name;   	
+		 });
+    	return movie_name;   	
+    }
+    
+    function getSessionData() {
+  	  $.ajax({
+            type: "GET",
+            url: "api/cartsession.do",
+            data: "id=" + session_id,
+            crossDomain: true,
+            cache: false,
+            dataType: 'json',
+            timeout: 5000,
+            success: function (response) {   
+            	getMovieData();
+              	updateHTML(response.response.data);
+            },
+            error: function () {
+                alert("無法連線到伺服器！");
+            }
+      });
+    }                 
+    
+  function updateHTML(data) {    	  
+  	  var inner_html = "";
+  	  if( seatlength != 0 ){
+	  	  $.each(data, function (key, value) {
+	  		  inner_html += updateSessionTable(value);
+	  		$("#cart_table > tbody").append(inner_html);
+	  	  });	 
+	  }
+  	 price = updatePrice();
+  	 $("#amount").html(price);
+  }
+
+    function t(obj){    	
+    	var text = obj.getAttribute("id");
+    	var index = text.split('_');
+    	var price = 0 ;
+        	 switch(obj.value)
+             {    	
+                case '200':
+                   document.getElementById('selected_value_id_'+ index[1]).setAttribute('value', obj.value)
+                   break;
+                case '150':
+                	document.getElementById('selected_value_id_'+ index[1]).setAttribute('value', obj.value);  
+                	break;
+                case '250':
+                	document.getElementById('selected_value_id_'+ index[1]).setAttribute('value', obj.value);               	              
+                	break;                  
+             }     
+        	 price = updatePrice();             
+     	  	 $("#amount").html(price);
+    }
+    
+    function updatePrice(){
+    	var price = 0 ;
+    	var type;
+    	for(var i = 0; i < seatlength; i++){      
+    	var selecteItem = document.getElementById('type_'+i); //拿到select物件
+        var index = selecteItem.selectedIndex ;  //拿到選中項的索引
+    	 
+    	 switch(index)
+         {    	
+            case 0:
+              type = "學生票";
+               break;
+            case 1:
+            	type = "愛心票";
+            	break;
+            case 2:
+            	type = "普通票";
+            	break;                  
+         }         	 
+    	 typeArray[i] = type;
+         var ticket_price = selecteItem.options[index].value;//拿到選中項options的value  
+         priceArray[i] = ticket_price;
+         price = price + Number(ticket_price);	   
+    	} 	
+    	return price;
+    }
+                 
+    function updateSessionTable(data) {      	
+        var table_html = ''; 
+        $("#cart_table > tbody").empty();        
+    	for(var i = 0; i < seatlength; i++){      	
+    	table_html += '<tr><td class="align-middle text-center">' + movie_name + '</td>';
+        table_html += '<td class="align-middle text-center">' + data.datetime + '</td>';
+        table_html += '<td class="align-middle"><p class="text-center">' + data.lobby + '</p></td>';
+        table_html += '<td class="align-middle"><p class="text-center">' + seatArr[i] + '</p></td>';
+        table_html += '<td class="align-middle"><p class="text-center"><select name="type" id="type_' + i + '" onchange="t(this)"><option value="200" selected >學生票</option><option value="150">愛心票</option><option value="250">普通票</option></select></p></td>';       
+        table_html += '<td class="align-middle"><p class="text-center"><input type="text" id="selected_value_id_' + i + '"value="200" size="5" align="center" disabled="disabled"/></p></td>';
+        table_html += '</tr>';
+        sessionIDArray.push(session_id);         
+        seatArray.push(seatArr[i]);
+    	}
+    	return table_html;   	   
+      }
+    
+    function getOrderID() {    
+    	var ticket_order_id = 0 ;
+  	  $.ajax({
+            type: "GET",
+            url: "api/ordermax.do",
+            crossDomain: true,
+            cache: false,
+            dataType: 'json',
+            timeout: 5000,
+            async: false,
+            success: function (response) {
+            	 ticket_order_id = getTicketOrderID(response.response.data);
+            	 console.log(ticket_order_id);
+                 console.log(response);
+                 return ticket_order_id;
+             },                	
+            error: function () {
+                alert("無法連線到伺服器！");
+            }
+      });
+  	  	return ticket_order_id;
+    }
+    
+    function getTicketOrderID(data){
+    	var ticket_order_id1 = 0 ;
+    	$.each(data, function (key, value) { 
+    		ticket_order_id1 = data.order_info.order_id ; 	
+		 });
+    	return ticket_order_id1;   	
+    }
+  </script>
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-right">
+        <a href="#">Back to top</a>
+      </p>
+      <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+      <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a
+          href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>

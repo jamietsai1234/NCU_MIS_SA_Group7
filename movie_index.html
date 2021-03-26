@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--提供網頁內容的資訊給瀏覽器或是搜尋引擎-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+
+  <title>電影列表 ｜ 美美影城 </title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- 控制網頁與外部資源的關係，最常見應用就是導入css 檔案 -->
+  <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="shortcut icon">
+  
+  <!-- Custom styles for this template -->
+  	<link href="statics/css/product.css" rel="stylesheet">
+	<link href="statics/css/welcome.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="statics/css/cake.generic.css">
+  	<script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+</head>
+<style>
+    .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+  .a{
+     z-index:55
+  }
+  
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+<body style="background:black;">
+  <div class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-black border-bottom shadow-sm"style="background-color:rgba(48,48,48,0.8)" >
+  <img  src="statics/icon/pig.ico"  width="5% hight=5">
+    <h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+
+  </div>
+  </body>
+
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+	.bg-pink {
+ 		background-color:#fff5e3;
+     }
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 5.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+<!--   <link href="statics/css/product.css" rel="stylesheet"> -->
+
+  <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    
+        <div id="content">
+        	 <br><br><br><br>
+            <h2><strong>電影清單</strong></h2>
+            <a href="movie_register.html">新增電影</a>
+            <a href="movie_show_manager.html">電影列表</a>
+
+            <div id="flashMessage" class="message" style="display: none;"></div>
+
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th width="5%">編號</th>
+                        <th width="15%">電影名稱</th>
+                        <th width="50%">電影簡介</th>
+                        <th width="10%">電影時長</th>
+                        <th width="10%">電影圖片</th>
+                        <th width="10%">功能</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <script type="text/javascript">
+                // 全域變數紀錄SQL指令下的次數
+                var sql_num = 0;
+                function deleteMovie(id) {
+                    var check = window.confirm("確認刪除電影？");
+                    if (check == true) {
+                        console.log("You pressed OK!");
+                        var request = {'id': id};
+                        var data_string = JSON.stringify(request);
+                        $.ajax({
+                            type: "DELETE",
+                            url: "api/movie.do",
+                            crossDomain: true,
+                            data: data_string,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                            success: function (response) {
+                                if(response.status == 200){
+                                    alert("成功! 已經成功刪除電影...");
+                                    getAllMovie();
+                                }
+                                console.log(response);
+                            },
+                            error: function () {
+                                alert("無法連線到伺服器！");
+                            }
+                        });
+                    }
+                    else {
+                        console.log("You pressed Cancel!");
+                    }
+                }
+
+                function getAllMovie() {
+                    // 發出POST的GET請求取得所有會員列表
+                    $.ajax({
+                            type: "GET",
+                            url: "api/movie.do",
+                            crossDomain: true,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                            success: function (response) {
+                                if(response.status == 200){
+                                    updateTable(response.response.data);
+                                    updateSQLTable(response.response);
+                                }
+                                console.log(response);
+                            },
+                            error: function () {
+                                alert("無法連線到伺服器！");
+                            }
+                    });
+                }
+                
+                // 更新會員列表表格
+                function updateTable(data) {
+                    $("#table > tbody").empty();
+                    var table_html = '';
+                    $.each(data, function(index, value) {
+                        table_html += '<tr><td scope="row">' + value['id'] + '</td>';
+                        table_html += '<td>' + value['name'] + '</td>';
+                        table_html += '<td>' + value['intro'] + '</td>';
+                        table_html += '<td>' + value['length'] + '</td>';
+                        table_html += '<td>' + value['image'] + '</td>';
+                        table_html += '<td>' + '<a href="movie_edit.html?id=' + value['id'] + '">編輯</a> | ';
+                        table_html += '<a href="javascript: deleteMovie(' + value['id'] + ');">刪除</a></td></tr>';
+                    })
+
+                    $("#table > tbody").append(table_html);
+                }
+                
+                // 更新SQL指令歷史表格
+                function updateSQLTable(data) {
+                    $("#sql_log > tbody").empty();
+                    var time = (data.time / 1000000).toFixed(2);
+                    var table_html = "";
+                    
+                    sql_num = 0;
+                    sql_num += 1
+
+                    table_html += '<tr>';
+                    table_html += '<td>' + sql_num + '</td>';
+                    table_html += '<td>' + data.sql + '</td>';
+                    table_html += '<td style="text-align: right">' + '0' + '</td>';
+                    table_html += '<td style="text-align: right">' + data.row + '</td>';
+                    table_html += '<td style="text-align: right">' + data.row + '</td>';
+                    table_html += '<td style="text-align: right">' + time + '</td>';
+                    table_html += '</tr>';
+                    $("#sql_log > tbody").append(table_html);
+                    $("#sql_summary").html("(default) " + data.row + " queries took " + time + " ms");
+                }
+                $(document).ready(function() {
+                    getAllMovie();
+                });
+            </script>
+        </div>
+        
+    </div>
+ 
+    <footer class="text-muted">
+    <div class="container">
+      
+      <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+      <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a
+          href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+    </div>
+  </footer>   
+    
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><!--語言是英文，中文的話要用zh -->
+
+<head>
+<!--提供網頁內容的資訊給瀏覽器或是搜尋引擎-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+
+  <title>瀏覽電影 ｜ 美美影城 </title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- 控制網頁與外部資源的關係，最常見應用就是導入css 檔案 -->
+  <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/pig.ico" type="image/x-icon" rel="shortcut icon">
+  <!-- <link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon"> -->
+
+
+  <style>
+    .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+  .a{
+     z-index:55
+  }
+  
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <link href="statics/css/product.css" rel="stylesheet">
+
+  <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body style="background-color:#000000">
+  <div class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color:rgba(48,48,48,0.8)" >
+  
+  <img  src="statics/icon/pig.ico"  width="5% hight=5">
+    <h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+      <!-- <a class="p-2 text-dark" href="movie_index.html">電影管理模組</a>
+      <a class="p-2 text-dark" href="index.html">會員管理模組</a> -->
+      <!-- <a class="p-2 text-dark" href="move_show.html">電影列表</a> -->
+      
+      <a class="p-2 text-light" id=order href="order.html">訂單列表</a>
+      
+      <a class="p-2 text-light" id=cart href="cart.html">票夾</a>
+      <a class="btn" style="border-color:#ffc6ba;color:#ffc6ba" href="welcome.html">登出</a>
+    </nav>
+    
+  </div>
+
+  <div class="a pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center" style="background-color:#000000">
+     <h1 class="d"  style="color:#000000">電影列表</h1>
+    <h1 class="text-light">電影列表</h1>
+    <p class="lead text-light">以下是所有電影包含其ID、電影名稱、片長與簡介</p>
+  </div>
+
+  <div class="album py-5">
+    <div class="container">
+      <div id="movie_panel" class="row text-light">
+      </div>
+    </div>
+  </div>
+
+  <script>   
+   
+    var sql_num = 0;
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var member_email = url.searchParams.get("member_email");
+    
+    function getAllMovie() {
+      $.ajax({
+        type: "GET",
+        url: "api/movie.do",
+        crossDomain: true,
+        cache: false,
+        dataType: 'json',
+        timeout: 5000,
+        success: function (response) {
+          if (response.status == 200) {
+        	var movie_panel = '';
+        	
+        	$.each(response.response.data, function (){
+        		movie_panel += addMovie(this);
+        	})
+        	
+        	$("#movie_panel").append(movie_panel);
+        	addOrder();
+        	cart();
+          }
+        },
+        error: function () {
+          alert("無法連線到伺服器！");
+        }
+        
+      });
+    }
+
+    getAllMovie();
+    
+    function addMovie(data) {
+    	let inner_html = '';
+    	inner_html += '<div class="col-md-4">';
+   		inner_html += '<div class="card-header">';
+   		inner_html += '<h4 class="font-weight-normal text-center text-truncate">' + data.name + '</h4>';
+ 		inner_html += '</div>';
+ 		inner_html += '<div class="card mb-4 shadow-sm">';
+ 		inner_html += '<img src="statics/img/movie/' + data.image + '" width="100% hight="300">';
+		inner_html += '<div class="card-body">';
+		inner_html += '<div class="d-flex justify-content-between align-items-center text-center">';
+		inner_html +='<a href="movie_detail.html?id='+ data.id +'&member_email='+ member_email  + '"class="stretched-link">電影簡介</a>';
+		inner_html += '</div></div></div></div>';
+    	
+		return inner_html;
+    }
+    
+    function addOrder() {
+		document.getElementById("order").href="ordermember.html?member_email="+ member_email;
+    }
+    
+	function cart() {
+		document.getElementById("cart").href="cart.html?member_email="+ member_email;
+    }
+      
+  </script>
+
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-right">
+        <a href="#">Back to top</a>
+      </p>
+      <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+      <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a
+          href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>
+
+

@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+ 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+	<meta name="generator" content="Jekyll v3.8.5">
+
+<title>選擇座位 ｜ 美美影城</title>
+
+<!-- Bootstrap core CSS -->
+<link href="statics/css/bootstrap.min.css" rel="stylesheet">
+<link href="statics/css/font-awesome.min.css" rel="stylesheet">
+<link href="statics/icon/pig.ico" type="image/x-icon" rel="icon">
+<link href="statics/icon/pig.ico" type="image/x-icon"
+ 	rel="shortcut icon">
+
+<style>
+ .top{
+     width:100vw;
+     height:90px;
+     position:fixed;
+     top:0;
+     z-index:99
+}
+
+ .a{ 
+     z-index:55
+  }
+
+.bd-placeholder-img {
+ font-size: 1.125rem;
+ text-anchor: middle;
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+}
+
+@media ( min-width : 768px) {
+ .bd-placeholder-img-lg {
+  font-size: 3.5rem;
+ }
+}
+​
+
+</style>
+<!-- Custom styles for this template -->
+<!-- link href="statics/css/jquery-confirm.css" rel="stylesheet"-->
+<link href="statics/css/seat2.css" rel="stylesheet">
+
+<script src="statics/js/jquery-3.4.1.min.js"></script>
+<script src="statics/js/jquery-confirm.js"></script>
+<script src="statics/js/big.min.js"></script>
+</head>
+
+<body style="background-color:#000000">
+  <div
+  	class="top d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color:rgba(48,48,48,0.8)">
+  	<img src="statics/icon/pig.ico" width="5% hight=5">
+  	<h5 class="my-0 mr-md-auto font-weight-normal text-light">美美影城</h5>
+  	<nav class="my-2 my-md-0 mr-md-3">
+
+   	<a class="p-2 text-light" id=movieshow href="movie_show.html">瀏覽電影</a>
+   	<a class="p-2 text-light" id=ordermember href="ordermember.html">訂單列表</a>
+
+   	<a class="p-2 text-light" id=cart href="cart.html">票夾</a> 
+   	<a class="btn" style="border-color:#ffc6ba;color:#ffc6ba" href="welcome.html">登出</a>
+  </nav>
+ </div>
+
+ <div
+  class=" a pricing-header px-3 py-10 pt-md-5 pb-md-4 mx-auto text-center" style="background-color:#000000">
+  <h1 class="d" style="color:#000000">yji4jo4</h1>
+  <h1 class="text-light">座位表</h1>
+  <p class="lead text-light">請選擇座位</p>
+ </div>
+
+ <script type="text/javascript">
+ 
+var arrseat  = new Array();//arrseat 代表已售出座位 要從DB裡撈ticket資料來的
+var url_string = window.location.href;//得到現在畫面上的網址 
+var url = new URL(url_string);
+
+//eg.網址:seat.html?movie_id=9 ，則得到movie_id=9
+var member_email = url.searchParams.get("member_email");
+var session_id = url.searchParams.get("session_id");
+var movie_id = url.searchParams.get("movie_id");
+
+function getAllTicketData() {
+ var arrseat = new Array();
+   $.ajax({
+  //呼叫ticketController 的doGet
+        type: "GET",
+        url: "api/ticket.do",
+        crossDomain: true,
+        cache: false,
+        data: "id=" + session_id,
+        dataType: 'json',
+        async:false,
+        timeout: 5000,
+        success: function (response) {
+            if(response.status == 200){
+             arrseat =updateTicketTable(response.response.data);
+              return arrseat;
+          
+            }
+            console.log(response);
+        },
+        error: function () {
+            alert("無法連線到伺服器！");
+        }
+  });
+
+   return arrseat; 
+}
+
+function updateTicketTable(data) {
+ //將從資料庫取出的資料(ticket 裡的 seat_id) 存進 arrseat
+var arrseat = new Array();
+   $.each(data, function (k, v) { 
+      arrseat.push(v['ticket1_info']['seat_id']);
+   }); 
+   return arrseat;
+}
+
+function movieshow(){
+   document.getElementById("movieshow").href="movie_show.html?member_email="+ member_email;
+  }
+function ordermember(){
+   document.getElementById("ordermember").href="ordermember.html?member_email="+ member_email;
+  }
+function cart(){    
+   document.getElementById("cart").href="cart.html?member_email="+ member_email;
+  }
+movieshow();
+ordermember();
+cart();
+
+ $(function(){
+ var seat_num ;
+ var seatArr = new Array();//有點到的seat 要傳到cart的
+ var total_bill = 0 ; 
+// var pricePerTicked = 300;//單價 
+ var maximumSeats = 5;//預定座位數目的最大限制
+ arrseat=getAllTicketData();
+ console.log("寫入seat:"+arrseat);
+ 
+
+ $('#checknow').hide(); // 隱藏預定按鈕 
+ $('#seats .seat').each(function() { 
+  var column_num = parseInt( $(this).index() ) + 1; 
+  var row_num = parseInt( $(this).parent().index() )+1;
+  var seat_id = row_num+"-"+column_num ; 
+  
+  $(this).text(seat_id); // 座位號 
+  $(this).addClass("seat"+seat_id); // 個座位加css 
+  
+    
+  if(arrseat.includes(seat_id)){//如果這個seat_id 有在arrseat裡(表示該座位已售出)
+    $(this).addClass("disable");//使不能點
+  	$(this).css('background-color','#D9006C'); //粉紅
+  }
+  
+  else {
+   	$(this).css('background-color','#D8D8D8'); //設成灰色
+  }
+  }); 
+ 
+ 
+ //按下現在預定
+ $("#checknow").click(function () {
+  seatArr.sort();//將seat_id 做排序 非必要
+  
+ 	 //將頁面轉到cart.html ，且將之後結帳需要的參數也傳進去
+  	window.location.href='cart.html?movie_id='+movie_id+'&session_id='+session_id+'&seat_id='+seatArr+'&member_email='+member_email;
+ });
+ 
+ 
+ //點某個座位
+ $("#seats .seat").click(function(event) {
+  	$('#errMsg').html(''); 
+    var column_num = parseInt( $(this).index() ) + 1; 
+    var row_num = parseInt( $(this).parent().index() )+1; 
+    seat_id = row_num+"-"+column_num ; 
+  
+  //如果這個seat已售出
+  	if(arrseat.includes(seat_id)){
+    	event.preventDefault();
+    	$(this).addClass("disable");
+    }
+  
+  	if($(this).hasClass('select')){ // 檢查是否被選中 
+   		$(this).removeClass('select'); //移除選中的css 
+   		$(this).css('background-color','#D8D8D8'); // 重新加個背景 灰色 
+    	var found_index = seatArr.indexOf(seat_id);//找到該座位的index
+    	console.log("before:"+seatArr);
+    	seatArr.splice(found_index,1);//從seatArr裡移除該座位
+    	console.log("after:"+seatArr);
+   
+  	    var currentSeatClass = $(this).attr('class').split(' ')[1]; 
+   		console.log(currentSeatClass); 
+   		$( "#selected_seat ."+currentSeatClass ).remove();   
+  }
+  else if($(".your_selected_seat").length<maximumSeats && !$(this).hasClass('select')){
+   // 檢查預定的座位數目是否超出限制 
+   		$(this).css('background-color','#71DCAA'); // 加背景顏色 
+   		$(this).addClass("select"); // 新增選中css 
+   		seatArr.push(seat_id);//新增該座位到seatArr
+   		$( "#selected_seat" ).append(
+      		"<span class='your_selected_seat seat"+seat_id+"'> 座位號: <b style='color:#EAABFF'>" + row_num+"-"+column_num +"</b>");
+  }
+   
+  else { $('#errMsg').html('您選中的座位已經超過限制.'); } 
+  	
+  if($(".your_selected_seat").length){
+	  $('#checknow').fadeIn(100); 
+	}//如果有選座位 則顯現現在預定按鈕
+  else { $('#checknow').fadeOut(100); } 
+  
+ }); 
+ });
+
+ </script>
+</head>
+</body>
+
+ <!--BOOKING SECTION START-->
+ <!-- div style="width:900px;margin: 0 auto;"-->
+
+ <span id='screen'> 銀幕
+  <div id="seats" style="background-color:#000000">
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   <div class="seatsRaw">
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+    <div class="seat"></div>
+   </div>
+   </span>
+   <div id="booking_desc" style="background-color:#000000">
+   <p style="color: #ffe785; font-weight: bold; font-size: larger;">您選中的座位
+    <div id="selected_seat"></div>
+    <div id="errMsg"></div>
+   <button id="checknow" class="btn btn-info btn-lg btn-block"
+      type="button">現在預訂</button>
+   </div>
+  
+</html>

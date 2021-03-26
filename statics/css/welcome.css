@@ -1,0 +1,122 @@
+.slider_container {
+    margin: 5px ;
+    width: 1410px;
+    height:588px;
+    position: relative;
+    border: 20px solid;    
+    border-color: #fff;
+    border-bottom-width: 100px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: #666 0 0 5px;
+}
+
+.slider_container div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.slider_container div {
+    -webkit-animation: round 8s linear infinite;
+            animation: round 8s linear infinite;
+}
+
+@-webkit-keyframes round {
+    12.5% {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        /* 0 - 1¨Ì ≤H§J*/
+    }
+    50% {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        /* 1- 4¨Ì¿R§Ó*/
+    }
+    62.5% {
+        opacity: 0;
+        filter: alpha(opacity=0);
+        /* 4-5¨Ì≤H•X*/
+    }
+}
+@keyframes round {
+    12.5% {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        /* 0 - 1¨Ì ≤H§J*/
+    }
+    50% {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        /* 1- 4¨Ì¿R§Ó*/
+    }
+    62.5% {
+        opacity: 0;
+        filter: alpha(opacity=0);
+        /* 4-5¨Ì≤H•X*/
+    }
+}
+
+.slider_container div:nth-child(1) {
+    -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+}
+
+.slider_container div:nth-child(2) {
+    -webkit-animation-delay: 4s;
+            animation-delay: 4s;
+}
+
+
+
+.slider_container span {    
+    color: #000;
+    background: #fff;
+    position: absolute;
+    left: 0%;
+    top: 280px;
+    width: 400px;
+    height: 100px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 100px;
+    -webkit-transform:scaleY(0);
+        -ms-transform:scaleY(0);
+            transform:scaleY(0);
+    -webkit-transition: all 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out;
+}
+
+.slider_container:hover span {
+    width: 100%;
+    -webkit-transform:scaleY(1);
+        -ms-transform:scaleY(1);
+            transform:scaleY(1);
+}
+.slider_container:hover div {
+    -webkit-animation-play-state: paused;
+            animation-play-state: paused;
+}
+
+.box_container {
+	top: 500px;
+	left:300px;
+   
+    width: 500px;
+    height:500px;
+    position: absolute;
+    border: 20px solid;    
+    border-color: #fff;
+    border-bottom-width: 100px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: #666 0 0 5px;
+}
+
+.slider_container1 div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
